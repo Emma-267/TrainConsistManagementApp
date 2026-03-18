@@ -17,6 +17,6 @@ public class TrainConsistManagementApp{
         bogies.add("BG102");
         System.out.println("Bogies IDs After Insertion:\n"+bogies);
         System.out.println("\nNote:\nDuplicates are automatically ignored by HashSet.");
-        System.out.println("\nUC2 uniqueness validation completed...");
+        System.out.println("\nUC3 uniqueness validation completed...");
     }
 }
