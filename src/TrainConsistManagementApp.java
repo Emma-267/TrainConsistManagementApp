@@ -5,9 +5,9 @@ import java.util.List;
 //@version 4.0
 public class TrainConsistManagementApp{
     public static void main(String[] args){
-        System.out.println("==================================");
-        System.out.println("== UC3 - Maintain Ordered Bogie Consist ==");
-        System.out.println("==================================\n");
+        System.out.println("==========================================");
+        System.out.println("== UC4 - Maintain Ordered Bogie Consist ==");
+        System.out.println("==========================================\n");
         List<String> trainConsist=new LinkedList<>();
         trainConsist.add("Engine");
         trainConsist.add("Sleeper");
