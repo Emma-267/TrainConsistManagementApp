@@ -5,73 +5,77 @@ import main.TrainConsistManagementApp;
 import main.TrainConsistManagementApp.Bogie;
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class TrainConsistManagementAppTest extends TestCase{
-    private List<TrainConsistManagementApp.Bogie> bogies;
+    private List<Bogie> bogies;
     private final int THRESHOLD=70;
     @Override
     protected void setUp(){
         bogies=new ArrayList<>();
         bogies.add(new Bogie("Sleeper",72));
         bogies.add(new Bogie("AC Chair",56));
-        bogies.add(new Bogie("First Class", 24));
+        bogies.add(new Bogie("First Class",24));
         bogies.add(new Bogie("General",90));
-    }
-    private List<TrainConsistManagementApp.Bogie> filterBogies(List<Bogie> list, int threshold){
-        return list.stream().filter(b->b.getCapacity()>threshold).collect(Collectors.toList());
+        bogies.add(new Bogie("Sleeper",54));
     }
 
     @Test
-    public void testFilter_CapacityGreaterThanThreshold(){
-        List<Bogie> result=filterBogies(bogies,THRESHOLD);
-        assertTrue("Results should only contain capacities > 70",result.stream().allMatch(b->b.getCapacity()>THRESHOLD));
+    public void testFilter_BogiesGroupedByType(){
+        Map<String, List<Bogie>> grouped=bogies.stream().collect(Collectors.groupingBy(Bogie::getName));
+        assertNotNull(grouped);
+        assertTrue(grouped.containsKey("Sleeper"));
     }
 
     @Test
-    public void testFilter_CapacityEqualToThreshold(){
-        List<Bogie> result=filterBogies(bogies,THRESHOLD);
-        boolean containsThresholdValue=result.stream().anyMatch(b->b.getCapacity()==THRESHOLD);
-        assertFalse("Bogie with capacity exactly 70 should be excluded",containsThresholdValue);
+    public void testFilter_MultipleBogiesInSameGroup(){
+        Map<String, List<Bogie>> grouped=bogies.stream().collect(Collectors.groupingBy(Bogie::getName));
+        assertEquals(2,grouped.get("Sleeper").size());
     }
 
     @Test
-    public void testFilter_CapacityLessThanThreshold(){
-        List<Bogie> result=filterBogies(bogies,THRESHOLD);
-        assertTrue("Filtered list should not contain bogies with capacity < 70",result.stream().noneMatch(b->b.getCapacity()<THRESHOLD));
-    }
-
-    @Test
-    public void testFilter_MultipleBogiesMatching(){
-        List<Bogie> result=filterBogies(bogies,THRESHOLD);
-        assertEquals("Should find exactly 2 matching bogies",2,result.size());
-    }
-
-    @Test
-    public void testFilter_NoBogiesMatching(){
-        List<Bogie> result=filterBogies(bogies,100);
-        assertTrue("Filtered list should be empty when no matches exist",result.isEmpty());
-    }
-
-    @Test
-    public void testFilter_AllBogiesMatching(){
-        List<Bogie> result=filterBogies(bogies,10);
-        assertEquals("Filtered list should contain all original bogies",bogies.size(),result.size());
+    public void testFilter_DifferentBogieTypes(){
+        Map<String, List<Bogie>> grouped=bogies.stream().collect(Collectors.groupingBy(Bogie::getName));
+        assertNotSame(grouped.get("Sleeper"),grouped.get("AC Chair"));
+        assertEquals(4,grouped.keySet().size());
     }
 
     @Test
     public void testFilter_EmptyBogieList(){
-        List<Bogie> emptyList=new ArrayList<>();
-        List<Bogie> result=filterBogies(emptyList,THRESHOLD);
-        assertTrue("Filtering an empty list should return an empty result",result.isEmpty());
+        List<Bogie> emptyList=Collections.emptyList();
+        Map<String, List<Bogie>> grouped=emptyList.stream().collect(Collectors.groupingBy(Bogie::getName));
+        assertTrue(grouped.isEmpty());
+    }
+
+    @Test
+    public void testFilter_SingleBogieCategory(){
+        List<Bogie> singleCategory=Arrays.asList(new Bogie("Sleeper",24));
+        Map<String, List<Bogie>> grouped=singleCategory.stream().collect(Collectors.groupingBy(Bogie::getName));
+        assertEquals(1,grouped.size());
+        assertTrue(grouped.containsKey("Sleeper"));
+    }
+
+    @Test
+    public void testFilter_MapContainsCorrectKeys(){
+        Map<String, List<Bogie>> grouped=bogies.stream().collect(Collectors.groupingBy(Bogie::getName));
+        assertTrue(grouped.containsKey("Sleeper"));
+        assertTrue(grouped.containsKey("AC Chair"));
+        assertTrue(grouped.containsKey("First Class"));
+    }
+
+    @Test
+    public void testFilter_GroupSizeValidation(){
+        Map<String, List<Bogie>> grouped=bogies.stream().collect(Collectors.groupingBy(Bogie::getName));
+        assertEquals(2,grouped.get("Sleeper").size());
+        assertEquals(1,grouped.get("AC Chair").size());
     }
 
     @Test
     public void testFilter_OriginalListUnchanged(){
         int originalSize=bogies.size();
-        filterBogies(bogies,THRESHOLD);
-        assertEquals("Original list size should remain unchanged after streaming",originalSize,bogies.size());
+        bogies.stream().collect(Collectors.groupingBy(Bogie::getName));
+        assertEquals(originalSize, bogies.size());
+        assertEquals("Sleeper", bogies.get(0).getName());
     }
 }

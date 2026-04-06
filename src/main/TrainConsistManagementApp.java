@@ -2,10 +2,11 @@ package main;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
-//Filter passenger bogies using Stream pipelines based on seating capacity.
-//@version 8.0
+//Group bogies into categories using Stream collectors.
+//@version 9.0
 public class TrainConsistManagementApp{
     public static class Bogie{
         String name;
@@ -13,6 +14,9 @@ public class TrainConsistManagementApp{
         public Bogie(String name, int capacity){
             this.name=name;
             this.capacity=capacity;
+        }
+        public String getName(){
+            return name;
         }
         public int getCapacity(){
             return capacity;
@@ -23,19 +27,24 @@ public class TrainConsistManagementApp{
         }
     }
     public static void main(String[] args){
-        System.out.println("=================================================");
-        System.out.println("== UC8 - Filter Passenger Bogies Using Streams ==");
-        System.out.println("=================================================\n");
+        System.out.println("================================");
+        System.out.println("== UC9 - Group Bogies By Type ==");
+        System.out.println("================================\n");
         List<Bogie> bogies=new ArrayList<>();
         bogies.add(new Bogie("Sleeper",72));
         bogies.add(new Bogie("AC Chair",56));
         bogies.add(new Bogie("First Class",24));
-        bogies.add(new Bogie("General",90));
+        bogies.add(new Bogie("Sleeper",70));
+        bogies.add(new Bogie("AC Chair",60));
         System.out.println("All Bogies:");
-        bogies.forEach(System.out::println);
-        System.out.println("\nFiltered Bogies (Capacity > 60):");
-        List<Bogie> bogie=bogies.stream().filter(b -> b.capacity > 60).toList();
-        bogie.forEach(System.out::println);
-        System.out.println("UC8 filtering completed...");
+        for(Bogie b:bogies){
+            System.out.println(b.toString());
+        }
+        Map<String,List<Bogie>> groupedBogies=bogies.stream().collect(Collectors.groupingBy(b->b.name));
+        System.out.println("\nGrouped Bogies:");
+        for(Map.Entry<String,List<Bogie>> entry:groupedBogies.entrySet()){
+            System.out.println("Bogie Type: "+entry.getKey()+"\nCapacity -> "+entry.getValue()+"\n");
+        }
+        System.out.println("UC9 grouping completed...");
     }
 }
