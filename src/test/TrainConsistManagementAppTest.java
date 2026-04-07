@@ -2,48 +2,59 @@ package test;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
-import main.TrainConsistManagementApp.GoodsBogies;
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
+import main.TrainConsistManagementApp;
 
 public class TrainConsistManagementAppTest{
-    @Test
-    public void testCargo_SafeAssignment(){
-        GoodsBogies bogie=new GoodsBogies("Cylindrical","Oil");
-        bogie.assignCargo("Petroleum");
-        assertEquals("Petroleum",bogie.getCargo());
+    public static void bubbleSort(int[] arr){
+        int n=arr.length;
+        for(int i=0;i<n-1;i++){
+            for(int j=0;j<n-i-1;j++){
+                if(arr[j]>arr[j+1]){
+                    int temp=arr[j];
+                    arr[j]=arr[j+1];
+                    arr[j+1]=temp;
+                }
+            }
+        }
     }
 
     @Test
-    public void testCargo_UnsafeAssignmentHandled(){
-        GoodsBogies bogie=new GoodsBogies("Rectangular","Coal");
-        bogie.assignCargo("Petroleum");
-        assertTrue(true);
+    public void testSort_BasicSorting(){
+        int[] arr={72, 56, 24, 70, 60};
+        int[] expected={24, 56, 60, 70, 72};
+        bubbleSort(arr);
+        assertArrayEquals(expected,arr);
     }
 
     @Test
-    public void testCargo_CargoNotAssignedAfterFailure(){
-        GoodsBogies bogie=new GoodsBogies("Rectangular","Coal");
-        bogie.assignCargo("Petroleum");
-        assertNotEquals("Petroleum",bogie.getCargo());
+    public void testSort_AlreadySortedArray(){
+        int[] arr={24, 56, 60, 70, 72};
+        int[] expected={24, 56, 60, 70, 72};
+        bubbleSort(arr);
+        assertArrayEquals(expected, arr);
     }
 
     @Test
-    public void testCargo_ProgramContinuesAfterException(){
-        GoodsBogies b1=new GoodsBogies("Rectangular","Coal");
-        GoodsBogies b2=new GoodsBogies("Cylindrical","Oil");
-        b1.assignCargo("Petroleum");
-        b2.assignCargo("Petroleum");
-        assertEquals("Petroleum",b2.getCargo());
+    public void testSort_DuplicateValues(){
+        int[] arr={72, 56, 56, 24};
+        int[] expected={24, 56, 56, 72};
+        bubbleSort(arr);
+        assertArrayEquals(expected, arr);
     }
 
     @Test
-    public void testCargo_FinallyBlockExecution(){
-        GoodsBogies bogie=new GoodsBogies("Rectangular","Coal");
-        ByteArrayOutputStream output=new ByteArrayOutputStream();
-        System.setOut(new PrintStream(output));
-        bogie.assignCargo("Petroleum");
-        String consoleOutput=output.toString();
-        assertTrue(consoleOutput.contains("Cargo validation completed for "+bogie.getType()+" bogie\n"));
+    public void testSort_SingleElementArray(){
+        int[] arr={50};
+        int[] expected={50};
+        bubbleSort(arr);
+        assertArrayEquals(expected, arr);
+    }
+
+    @Test
+    public void testSort_AllEqualValues(){
+        int[] arr={40, 40, 40};
+        int[] expected={40, 40, 40};
+        bubbleSort(arr);
+        assertArrayEquals(expected, arr);
     }
 }
