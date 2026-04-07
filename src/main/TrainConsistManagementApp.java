@@ -1,12 +1,9 @@
 package main;
 
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
-//Search and identify a specific bogie ID from an unsorted list using Linear Search.
-//@version 18.0
+//Find a bogie ID efficiently using binary search on sorted data.
+//@version 19.0
 public class TrainConsistManagementApp{
     public static class InvalidCapacityException extends Exception{
         public InvalidCapacityException(String message){
@@ -72,28 +69,39 @@ public class TrainConsistManagementApp{
             throw new InvalidCapacityException("Error: Capacity must be greater than zero");
         }
     }
+    public static boolean binarySearchBogie(String[] bogieIDs, String target){
+        int left=0;
+        int right=bogieIDs.length-1;
+        while(left<=right){
+            int mid=left+(right-left)/2;
+            int cmp=bogieIDs[mid].compareTo(target);
+            if(cmp==0){
+                return true;
+            }else if(cmp<0){
+                left=mid+1;
+            }else{
+                right=mid-1;
+            }
+        }
+        return false;
+    }
     public static void main(String[] args){
         System.out.println("=======================================");
-        System.out.println("== UC18 - Linear Search for Bogie ID ==");
+        System.out.println("== UC19 - Binary Search for Bogie ID ==");
         System.out.println("=======================================\n");
         String[] bogieIds={"BG101","BG205","BG309","BG412","BG550"};
         String searchId="BG309";
-        System.out.println("Available Bogie IDs: ");
+        Arrays.sort(bogieIds);
+        System.out.println("Sorted Bogie IDs: ");
         for(String Ids:bogieIds){
             System.out.println(Ids);
         }
-        boolean found=false;
-        for(String Ids:bogieIds){
-            if(Ids.equals(searchId)){
-                found=true;
-            }
-        }
+        boolean found=binarySearchBogie(bogieIds,searchId);
         if(found){
-            System.out.println("\nBogie "+searchId+" found in train consist.");
+            System.out.println("\nBogie "+searchId+" found using Binary Search");
+        }else{
+            System.out.println("\nBogie "+searchId+" not found using Binary Search");
         }
-        else{
-            System.out.println("\nBogie "+searchId+" not found in train consist.");
-        }
-        System.out.println("\nUC18 searching completed...");
+        System.out.println("\nUC19 searching completed...");
     }
 }
