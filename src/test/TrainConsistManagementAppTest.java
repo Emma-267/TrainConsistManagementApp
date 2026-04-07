@@ -1,60 +1,81 @@
 package test;
 
-import junit.framework.TestCase;
 import org.junit.Test;
-import java.util.*;
+import static org.junit.Assert.*;
 import main.TrainConsistManagementApp;
-import main.TrainConsistManagementApp.GoodsBogies;
+import main.TrainConsistManagementApp.PassengerBogie;
+import main.TrainConsistManagementApp.InvalidCapacityException;
+import java.util.ArrayList;
+import java.util.List;
 
-public class TrainConsistManagementAppTest extends TestCase{
-    private boolean validateSafety(List<GoodsBogies> bogies){
-        return bogies.stream().allMatch(bogie->{
-            if("Cylindrical".equalsIgnoreCase(bogie.getType())){
-                return "Petroleum".equalsIgnoreCase(bogie.getCargo());
-            }
-            return true;
-        });
+public class TrainConsistManagementAppTest{
+    @Test
+    public void testException_ValidCapacityCreation(){
+        try{
+            PassengerBogie bogie=new PassengerBogie("Sleeper",72);
+            TrainConsistManagementApp.validateCapacity(bogie);
+        }catch(InvalidCapacityException e){
+            fail("Exception should not be thrown for valid capacity");
+        }
     }
 
     @Test
-    public void testSafety_AllBogiesValid(){
-        List<GoodsBogies> train=Arrays.asList(
-                new GoodsBogies("Cylindrical", "Petroleum"),
-                new GoodsBogies("Box", "Coal")
-        );
-        assertTrue(validateSafety(train));
+    public void testException_NegativeCapacityThrowsException(){
+        try{
+            PassengerBogie bogie=new PassengerBogie("Sleeper",-10);
+            TrainConsistManagementApp.validateCapacity(bogie);
+            fail("Exception expected for negative capacity");
+        }catch(InvalidCapacityException e){
+            assertTrue(true);
+        }
     }
 
     @Test
-    public void testSafety_CylindricalWithInvalidCargo(){
-        List<GoodsBogies> train=Collections.singletonList(
-                new GoodsBogies("Cylindrical", "Coal")
-        );
-        assertFalse(validateSafety(train));
+    public void testException_ZeroCapacityThrowsException(){
+        try{
+            PassengerBogie bogie=new PassengerBogie("AC",0);
+            TrainConsistManagementApp.validateCapacity(bogie);
+            fail("Exception expected for zero capacity");
+        }catch(InvalidCapacityException e){
+            assertTrue(true);
+        }
     }
 
     @Test
-    public void testSafety_NonCylindricalBogiesAllowed(){
-        List<GoodsBogies> train=Arrays.asList(
-                new GoodsBogies("Box", "Coal"),
-                new GoodsBogies("Open", "Grain")
-        );
-        assertTrue(validateSafety(train));
+    public void testException_ExceptionMessageValidation(){
+        try{
+            PassengerBogie bogie=new PassengerBogie("AC",0);
+            TrainConsistManagementApp.validateCapacity(bogie);
+            fail("Exception expected");
+        }catch(InvalidCapacityException e){
+            assertEquals("Error: Capacity must be greater than zero",e.getMessage());
+        }
     }
 
     @Test
-    public void testSafety_MixedBogiesWithViolation(){
-        List<GoodsBogies> train=Arrays.asList(
-                new GoodsBogies("Box", "Coal"),
-                new GoodsBogies("Cylindrical", "Petroleum"),
-                new GoodsBogies("Cylindrical", "Grain")
-        );
-        assertFalse(validateSafety(train));
+    public void testException_ObjectIntegrityAfterCreation() {
+        PassengerBogie bogie = new PassengerBogie("Sleeper", 72);
+
+        assertEquals("Sleeper", bogie.getName());
+        assertEquals(72, bogie.getCapacity());
     }
 
     @Test
-    public void testSafety_EmptyBogieList(){
-        List<GoodsBogies> train=Collections.emptyList();
-        assertTrue(validateSafety(train));
+    public void testException_MultipleValidBogiesCreation(){
+        List<PassengerBogie> bogies=new ArrayList<>();
+        try{
+            PassengerBogie b1=new PassengerBogie("Sleeper",72);
+            PassengerBogie b2=new PassengerBogie("AC",60);
+            PassengerBogie b3=new PassengerBogie("General",90);
+            TrainConsistManagementApp.validateCapacity(b1);
+            TrainConsistManagementApp.validateCapacity(b2);
+            TrainConsistManagementApp.validateCapacity(b3);
+            bogies.add(b1);
+            bogies.add(b2);
+            bogies.add(b3);
+        }catch(InvalidCapacityException e){
+            fail("No exception should be thrown for valid bogies");
+        }
+        assertEquals(3, bogies.size());
     }
 }

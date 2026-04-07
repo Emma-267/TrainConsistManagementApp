@@ -8,9 +8,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-//Encapsulate bogie rules using functional interfaces and apply them using lambda expressions.
-//@version 12.0
+//Prevent invalid passenger bogies from being added to the train by enforcing capacity rules using a custom exception.
+//@version 14.0
 public class TrainConsistManagementApp{
+    public static class InvalidCapacityException extends Exception{
+        public InvalidCapacityException(String message){
+            super(message);
+        }
+    }
     public static class GoodsBogies{
         String type;
         String cargo;
@@ -29,10 +34,10 @@ public class TrainConsistManagementApp{
             return type+" -> "+cargo;
         }
     }
-    public static class Bogie{
+    public static class PassengerBogie{
         String name;
         int capacity;
-        public Bogie(String name, int capacity){
+        public PassengerBogie(String name, int capacity){
             this.name=name;
             this.capacity=capacity;
         }
@@ -47,32 +52,30 @@ public class TrainConsistManagementApp{
             return name+" -> "+capacity;
         }
     }
+    public static void validateCapacity(PassengerBogie bogie) throws InvalidCapacityException{
+        if(bogie.getCapacity()<=0){
+            throw new InvalidCapacityException("Error: Capacity must be greater than zero");
+        }
+    }
     public static void main(String[] args){
-        System.out.println("====================================================");
-        System.out.println("== UC12 - Safety Compliance Check for Goods Bogie ==");
-        System.out.println("====================================================\n");
-        List<GoodsBogies> goodsBogies=new ArrayList<>();
-        goodsBogies.add(new GoodsBogies("Cylindrical","Petroleum"));
-        goodsBogies.add(new GoodsBogies("Open","Coal"));
-        goodsBogies.add(new GoodsBogies("Box","Grain"));
-        goodsBogies.add(new GoodsBogies("Cylindrical","Coal"));
-        System.out.println("Goods Bogies in Train:");
-        for(GoodsBogies gb:goodsBogies){
-            System.out.println(gb.toString());
+        System.out.println("==========================================");
+        System.out.println("== UC14 - Handle Invalid Bogie Capacity ==");
+        System.out.println("==========================================\n");
+        List<PassengerBogie> bogies=new ArrayList<>();
+        try{
+            PassengerBogie b1=new PassengerBogie("Sleeper",72);
+            PassengerBogie b2=new PassengerBogie("AC Chair",-5);
+            validateCapacity(b1);
+            bogies.add(b1);
+            validateCapacity(b2);
+            bogies.add(b2);
+        }catch(InvalidCapacityException e){
+            System.out.println(e.getMessage());
         }
-        boolean isSafetyCompliant=goodsBogies.stream().allMatch(bogie->{
-            if("Cylindrical".equalsIgnoreCase(bogie.getType())){
-                return "Petroleum".equalsIgnoreCase(bogie.getCargo());
-            }
-            return true;
-        });
-        System.out.println("\nSafety Compliance Status: "+isSafetyCompliant);
-        if(isSafetyCompliant){
-            System.out.println("Train formation is SAFE.");
+        System.out.println("\nCreated Bogies: ");
+        for(PassengerBogie b:bogies){
+            System.out.println(b);
         }
-        else{
-            System.out.println("Train formation is NOT SAFE.");
-        }
-        System.out.println("\nUC12 safety validation completed...");
+        System.out.println("\nUC14 exception handling completed...");
     }
 }
