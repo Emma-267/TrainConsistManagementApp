@@ -5,8 +5,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-//Sort bogie type names alphabetically using Java’s built-in Arrays.sort() method.
-//@version 17.0
+//Search and identify a specific bogie ID from an unsorted list using Linear Search.
+//@version 18.0
 public class TrainConsistManagementApp{
     public static class InvalidCapacityException extends Exception{
         public InvalidCapacityException(String message){
@@ -73,15 +73,27 @@ public class TrainConsistManagementApp{
         }
     }
     public static void main(String[] args){
-        System.out.println("=================================================");
-        System.out.println("== UC17 - Sort Bogie Names Using Arrays.sort() ==");
-        System.out.println("=================================================\n");
-        String[] bogieNames={"Sleeper","AC Chair","First Class","General","Luxury"};
-        System.out.println("Original Bogie Names: ");
-        System.out.println(Arrays.toString(bogieNames));
-        System.out.println("\nSorted Bogie Names (Alphabetical): ");
-        Arrays.sort(bogieNames);
-        System.out.println(Arrays.toString(bogieNames));
-        System.out.println("\nUC17 sorting completed...");
+        System.out.println("=======================================");
+        System.out.println("== UC18 - Linear Search for Bogie ID ==");
+        System.out.println("=======================================\n");
+        String[] bogieIds={"BG101","BG205","BG309","BG412","BG550"};
+        String searchId="BG309";
+        System.out.println("Available Bogie IDs: ");
+        for(String Ids:bogieIds){
+            System.out.println(Ids);
+        }
+        boolean found=false;
+        for(String Ids:bogieIds){
+            if(Ids.equals(searchId)){
+                found=true;
+            }
+        }
+        if(found){
+            System.out.println("\nBogie "+searchId+" found in train consist.");
+        }
+        else{
+            System.out.println("\nBogie "+searchId+" not found in train consist.");
+        }
+        System.out.println("\nUC18 searching completed...");
     }
 }
