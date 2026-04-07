@@ -2,8 +2,8 @@ package main;
 
 import java.util.*;
 
-//Find a bogie ID efficiently using binary search on sorted data.
-//@version 19.0
+//Prevent search operations on an empty train by throwing an exception early.
+//@version 20.0
 public class TrainConsistManagementApp{
     public static class InvalidCapacityException extends Exception{
         public InvalidCapacityException(String message){
@@ -86,22 +86,24 @@ public class TrainConsistManagementApp{
         return false;
     }
     public static void main(String[] args){
-        System.out.println("=======================================");
-        System.out.println("== UC19 - Binary Search for Bogie ID ==");
-        System.out.println("=======================================\n");
-        String[] bogieIds={"BG101","BG205","BG309","BG412","BG550"};
+        System.out.println("=============================================");
+        System.out.println("== UC20 - Exception Handling During Search ==");
+        System.out.println("=============================================\n");
+        String[] bogieIds={};
         String searchId="BG309";
-        Arrays.sort(bogieIds);
-        System.out.println("Sorted Bogie IDs: ");
-        for(String Ids:bogieIds){
-            System.out.println(Ids);
+        try{
+            if(bogieIds.length==0){
+                throw new IllegalStateException("No bogies available on the train. Search cannot be performed.");
+            }
+            boolean found=binarySearchBogie(bogieIds,searchId);
+            if(found){
+                System.out.println("Bogie "+searchId+" found using Binary Search");
+            }else{
+                System.out.println("Bogie "+searchId+" not found using Binary Search");
+            }
+        }catch(IllegalStateException e){
+            System.out.println(e.getMessage());
         }
-        boolean found=binarySearchBogie(bogieIds,searchId);
-        if(found){
-            System.out.println("\nBogie "+searchId+" found using Binary Search");
-        }else{
-            System.out.println("\nBogie "+searchId+" not found using Binary Search");
-        }
-        System.out.println("\nUC19 searching completed...");
+        System.out.println("\nUC20 execution completed...");
     }
 }
