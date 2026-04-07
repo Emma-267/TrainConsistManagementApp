@@ -8,11 +8,16 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-//Prevent invalid passenger bogies from being added to the train by enforcing capacity rules using a custom exception.
-//@version 14.0
+//Safely handle unsafe cargo assignments without crashing the Train Consist Management App.
+//@version 15.0
 public class TrainConsistManagementApp{
     public static class InvalidCapacityException extends Exception{
         public InvalidCapacityException(String message){
+            super(message);
+        }
+    }
+    public static class CargoSafetyException extends Exception{
+        public CargoSafetyException(String message){
             super(message);
         }
     }
@@ -32,6 +37,19 @@ public class TrainConsistManagementApp{
         @Override
         public String toString(){
             return type+" -> "+cargo;
+        }
+        public void assignCargo(String cargo){
+            try{
+                if("Rectangular".equalsIgnoreCase(this.type)&& "Petroleum".equalsIgnoreCase(cargo)){
+                    throw new CargoSafetyException("Error: Unsafe cargo assignment!");
+                }
+                this.cargo=cargo;
+                System.out.println("Cargo assigned successfully -> "+cargo);
+            }catch(CargoSafetyException e){
+                System.out.println(e.getMessage());
+            }finally{
+                System.out.println("Cargo validation completed for "+type+" bogie\n");
+            }
         }
     }
     public static class PassengerBogie{
@@ -58,24 +76,13 @@ public class TrainConsistManagementApp{
         }
     }
     public static void main(String[] args){
-        System.out.println("==========================================");
-        System.out.println("== UC14 - Handle Invalid Bogie Capacity ==");
-        System.out.println("==========================================\n");
-        List<PassengerBogie> bogies=new ArrayList<>();
-        try{
-            PassengerBogie b1=new PassengerBogie("Sleeper",72);
-            PassengerBogie b2=new PassengerBogie("AC Chair",-5);
-            validateCapacity(b1);
-            bogies.add(b1);
-            validateCapacity(b2);
-            bogies.add(b2);
-        }catch(InvalidCapacityException e){
-            System.out.println(e.getMessage());
-        }
-        System.out.println("\nCreated Bogies: ");
-        for(PassengerBogie b:bogies){
-            System.out.println(b);
-        }
-        System.out.println("\nUC14 exception handling completed...");
+        System.out.println("==================================");
+        System.out.println("== UC15 - Safe Cargo Assignment ==");
+        System.out.println("==================================\n");
+        GoodsBogies g1=new GoodsBogies("Rectangular","Coal");
+        GoodsBogies g2=new GoodsBogies("Cylindrical","Oil");
+        g1.assignCargo("Petroleum");
+        g2.assignCargo("Petroleum");
+        System.out.println("UC15 runtime handling completed...");
     }
 }
