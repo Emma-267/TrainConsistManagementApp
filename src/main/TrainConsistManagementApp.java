@@ -1,15 +1,12 @@
 package main;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-//Sort passenger bogie capacities using a basic algorithm (Bubble Sort) instead of library methods.
-//@version 16.0
+//Sort bogie type names alphabetically using Java’s built-in Arrays.sort() method.
+//@version 17.0
 public class TrainConsistManagementApp{
     public static class InvalidCapacityException extends Exception{
         public InvalidCapacityException(String message){
@@ -76,27 +73,15 @@ public class TrainConsistManagementApp{
         }
     }
     public static void main(String[] args){
-        System.out.println("=============================================");
-        System.out.println("== UC16 - Manual Sorting Using Bubble Sort ==");
-        System.out.println("=============================================\n");
-        int[] capacities={72,56,24,70,60};
-        System.out.println("Original Capacities: ");
-        for(int c:capacities){
-            System.out.print(c+" ");
-        }
-        for(int i=0;i<capacities.length-1;i++){
-            for(int j=0;j<capacities.length-i-1;j++){
-                if (capacities[j]>capacities[j+1]){
-                    int temp=capacities[j];
-                    capacities[j]=capacities[j+1];
-                    capacities[j+1]=temp;
-                }
-            }
-        }
-        System.out.println("\n\nSorted Capacities (Ascending): ");
-        for(int c:capacities){
-            System.out.print(c+" ");
-        }
-        System.out.println("\n\nUC16 sorting completed...");
+        System.out.println("=================================================");
+        System.out.println("== UC17 - Sort Bogie Names Using Arrays.sort() ==");
+        System.out.println("=================================================\n");
+        String[] bogieNames={"Sleeper","AC Chair","First Class","General","Luxury"};
+        System.out.println("Original Bogie Names: ");
+        System.out.println(Arrays.toString(bogieNames));
+        System.out.println("\nSorted Bogie Names (Alphabetical): ");
+        Arrays.sort(bogieNames);
+        System.out.println(Arrays.toString(bogieNames));
+        System.out.println("\nUC17 sorting completed...");
     }
 }
